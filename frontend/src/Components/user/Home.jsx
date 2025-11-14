@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import Loader from "../layouts/Loader";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
@@ -14,8 +14,10 @@ const Home = () => {
   const [loadingProducts, setLoadingProducts] = useState(true);
   const [cartCount, setCartCount] = useState(0);
   const [currentImageIndexes, setCurrentImageIndexes] = useState({});
+  const [currentSlide, setCurrentSlide] = useState(0);
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -32,7 +34,17 @@ const Home = () => {
           setCartCount(cartRes.data.cart?.items?.length || 0);
         }
 
-        const productsRes = await axios.get("http://localhost:4001/api/v1/products");
+        // Check for search query in URL
+        const searchParams = new URLSearchParams(location.search);
+        const searchQuery = searchParams.get('search');
+        
+        let productsRes;
+        if (searchQuery) {
+          productsRes = await axios.get(`http://localhost:4001/api/v1/products/search?q=${encodeURIComponent(searchQuery)}`);
+        } else {
+          productsRes = await axios.get("http://localhost:4001/api/v1/products");
+        }
+        
         const productsData = productsRes.data.products || productsRes.data || [];
         setProducts(productsData);
 
@@ -51,7 +63,7 @@ const Home = () => {
     };
 
     fetchData();
-  }, [token]);
+  }, [token, location.search]);
 
   const nextImage = (productId, totalImages, e) => {
     e.stopPropagation();
@@ -85,6 +97,15 @@ const Home = () => {
     return () => clearInterval(interval);
   }, [products]);
 
+  // Slideshow auto-rotation
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % 3);
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, []);
+
   const handleAddToCart = async (productId) => {
     if (!token) {
       alert("Please log in to add products to your cart.");
@@ -113,111 +134,78 @@ const Home = () => {
     navigate("/login");
   };
 
+  const nextSlide = () => {
+    setCurrentSlide((prev) => (prev + 1) % 3);
+  };
+
+  const prevSlide = () => {
+    setCurrentSlide((prev) => (prev - 1 + 3) % 3);
+  };
+
+  const goToSlide = (index) => {
+    setCurrentSlide(index);
+  };
+
   return (
     <div className="home-container">
-<header className="home-header">
-  <div
-        className="header-actions"
-        style={{ display: "flex", gap: "15px", justifyContent: "flex-end" }}
-      >
-        {user ? (
-          <>
-            {/* Order History - icon only */}
-            <button
-              onClick={() => navigate("/order-history")}
-              style={{
-                padding: "6px",
-                backgroundColor: "transparent",
-                border: "none",
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-                color: "#1976d2",
-              }}
-              title="Order History"
-            >
-              <HistoryIcon fontSize="large" />
-            </button>
-
-            {/* Profile */}
-            <button
-              onClick={() => navigate("/profile")}
-              style={{
-                padding: "6px",
-                backgroundColor: "transparent",
-                border: "none",
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-                color: "#1976d2",
-              }}
-              title="Profile"
-            >
-              <AccountCircleIcon fontSize="large" />
-            </button>
-
-            {/* Cart */}
-            <button
-              onClick={() => navigate("/cart")}
-              style={{
-                padding: "6px",
-                backgroundColor: "transparent",
-                border: "none",
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-                color: "#1976d2",
-                position: "relative",
-              }}
-              title="Cart"
-            >
-              <ShoppingCartIcon fontSize="large" />
-              {cartCount > 0 && (
-                <span
-                  style={{
-                    position: "absolute",
-                    top: -5,
-                    right: -5,
-                    backgroundColor: "red",
-                    color: "white",
-                    borderRadius: "50%",
-                    padding: "2px 6px",
-                    fontSize: 12,
-                  }}
-                >
-                  {cartCount}
-                </span>
-              )}
-            </button>
-
-            {/* Logout */}
-            <button
-              onClick={handleLogout}
-              style={{
-                padding: "6px",
-                backgroundColor: "transparent",
-                border: "none",
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-                color: "#d32f2f",
-              }}
-              title="Logout"
-            >
-              <LogoutIcon fontSize="large" />
-            </button>
-          </>
-        ) : (
-          <Link to="/login" className="btn-primary">
-            Login
-          </Link>
-        )}
-      </div>
-    </header>
-
       {user && (
-        <main className="products-section">
-          <h2>Available Products</h2>
+        <>
+          {/* Farm Tools & Plants Banner Slideshow */}
+          <div className="slideshow-container">
+            <div className={currentSlide === 0 ? "slide active" : "slide"}>
+              <img src="/images/banner1.jpg" alt="Farm Tools Collection" className="slide-image" />
+              <div className="slide-content">
+                <h2 className="slide-title">Premium Farm Tools</h2>
+                <p className="slide-description">High-quality tools for modern farming</p>
+                <button className="btn btn-primary" onClick={() => navigate('/products')}>Shop Now</button>
+              </div>
+            </div>
+            <div className={currentSlide === 1 ? "slide active" : "slide"}>
+              <img src="/images/banner2.jpg" alt="Organic Plants" className="slide-image" />
+              <div className="slide-content">
+                <h2 className="slide-title">Organic Plants</h2>
+                <p className="slide-description">Fresh and healthy plants for your garden</p>
+                <button className="btn btn-primary" onClick={() => navigate('/products')}>Explore Plants</button>
+              </div>
+            </div>
+            <div className={currentSlide === 2 ? "slide active" : "slide"}>
+              <img src="/images/banner3.jpg" alt="Gardening Equipment" className="slide-image" />
+              <div className="slide-content">
+                <h2 className="slide-title">Gardening Essentials</h2>
+                <p className="slide-description">Everything you need for successful gardening</p>
+                <button className="btn btn-primary" onClick={() => navigate('/products')}>View Equipment</button>
+              </div>
+            </div>
+            
+            <button className="slideshow-nav prev" onClick={prevSlide}>
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+              </svg>
+            </button>
+            <button className="slideshow-nav next" onClick={nextSlide}>
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
+              </svg>
+            </button>
+            
+            <div className="slideshow-controls">
+              {[0, 1, 2].map((index) => (
+                <span
+                  key={index}
+                  className={currentSlide === index ? "slide-dot active" : "slide-dot"}
+                  onClick={() => goToSlide(index)}
+                ></span>
+              ))}
+            </div>
+          </div>
+
+          <main className="products-section">
+            <h2>
+              {location.search.includes('search=')
+                ? `Search Results for "${new URLSearchParams(location.search).get('search')}"`
+                : 'Available Products'
+              }
+            </h2>
 
           {loadingProducts ? (
             <div className="loader-container">
@@ -378,6 +366,7 @@ const Home = () => {
             </div>
           )}
         </main>
+        </>
       )}
     </div>
   );

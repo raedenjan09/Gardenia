@@ -9,7 +9,8 @@ const {
   softDeleteProduct,
   getActiveSuppliers,
   getDeletedProducts,
-  restoreProduct
+  restoreProduct,
+  searchProducts
 } = require('../controllers/ProductController');
 
 const { isAuthenticatedUser, isAdmin } = require('../middlewares/auth');
@@ -18,6 +19,7 @@ const router = express.Router();
 
 // Public routes
 router.get('/products', getAllProducts);
+router.get('/products/search', searchProducts);
 router.get('/products/:id', getProduct);
 router.get('/suppliers/dropdown', getActiveSuppliers);
 
