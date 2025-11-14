@@ -7,7 +7,11 @@ const Mailer = require('../utils/Mailer');
 exports.registerUser = async (req, res) => {
   try {
     console.log('📝 Register user request received');
-    const { name, email, password, avatar } = req.body;
+    console.log('📦 Request body:', JSON.stringify(req.body, null, 2));
+    const { name, email, password, contact, address } = req.body;
+    
+    // Use the address object directly, but ensure it has proper structure
+    const addressData = address || {};
 
     // Remove avatar from required fields
     if (!name || !email || !password) {
@@ -24,14 +28,26 @@ exports.registerUser = async (req, res) => {
     };
 
     console.log('👤 Creating user in database...');
-    // Create new user
-    const user = await User.create({
+    // Create new user with all fields
+    const userData = {
       name,
       email,
       password,
-      avatar: avatarData
-    });
+      avatar: avatarData,
+      contact: contact || "",
+      address: {
+        city: addressData.city || "",
+        barangay: addressData.barangay || "",
+        street: addressData.street || "",
+        zipcode: addressData.zipcode || ""
+      }
+    };
+
+    console.log('📝 User data being saved:', JSON.stringify(userData, null, 2));
+
+    const user = await User.create(userData);
     console.log('✅ User created in database:', user.email);
+    console.log('📝 Saved user data:', JSON.stringify(user, null, 2));
 
     // Generate email verification token
     console.log('🔐 Generating verification token...');
@@ -71,24 +87,25 @@ exports.registerUser = async (req, res) => {
     
     // Check for specific MongoDB errors
     if (error.code === 11000) {
-      return res.status(400).json({ 
-        success: false, 
-        message: 'Email already exists' 
+      return res.status(400).json({
+        success: false,
+        message: 'Email already exists'
       });
     }
     
     // Check for validation errors
     if (error.name === 'ValidationError') {
+      console.error('🔍 Validation errors:', error.errors);
       const messages = Object.values(error.errors).map(val => val.message);
-      return res.status(400).json({ 
-        success: false, 
-        message: messages.join(', ') 
+      return res.status(400).json({
+        success: false,
+        message: messages.join(', ')
       });
     }
 
-    res.status(500).json({ 
-      success: false, 
-      message: 'Registration failed. Please try again.' 
+    res.status(500).json({
+      success: false,
+      message: 'Registration failed. Please try again.'
     });
   }
 };
@@ -259,8 +276,10 @@ exports.getUserProfile = async (req, res) => {
     if (!user)
       return res.status(404).json({ message: 'User not found' });
 
-    res.status(200).json({ 
-      success: true, 
+    console.log('📝 User profile data from DB:', JSON.stringify(user, null, 2));
+
+    res.status(200).json({
+      success: true,
       user: {
         name: user.name,
         email: user.email,

@@ -1,10 +1,11 @@
-// HarmoniaHub/frontend/src/Components/layouts/loader.js
 import React from 'react';
-import '../../App.css'; // make sure to import your CSS
+import '../../App.css';
 
 const Loader = () => {
     return (
-        <div className="loader"></div>
+        <div className="loader-container">
+            <div className="loader"></div>
+        </div>
     );
 }
 

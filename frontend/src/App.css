@@ -897,7 +897,9 @@ body {
   justify-content: center;
   align-items: center;
   height: 100vh; /* full screen loader */
-  background: rgba(255, 255, 255, 0.8); /* semi-transparent overlay */
+  background: rgba(56, 55, 55, 0.9); /* semi-transparent overlay */
+  backdrop-filter: blur(3px); /* blur effect */
+  -webkit-backdrop-filter: blur(5px); /* Safari support */
   position: fixed;
   top: 0;
   left: 0;
@@ -919,6 +921,63 @@ body {
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
+}
+
+/* Success overlay styles */
+.success-overlay {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 9998;
+}
+
+.success-content {
+  text-align: center;
+  background: white;
+  padding: 40px;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  max-width: 500px;
+  width: 90%;
+}
+
+.success-icon {
+  font-size: 4rem;
+  color: #28a745;
+  margin-bottom: 20px;
+  animation: scaleIn 0.5s ease-out;
+}
+
+.success-content h3 {
+  color: #28a745;
+  margin-bottom: 15px;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.success-content p {
+  color: #666;
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+@keyframes scaleIn {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 
