@@ -36,17 +36,20 @@ const productSchema = new mongoose.Schema({
     category: {
         type: String,
         required: [true, 'Please select category for this product'],
-        enum: {
-            values: [
-                'Idiophones',
-                'Membranophones',
-                'Chordophones',
-                'Aerophones',
-                'Electrophones',
-                'Keyboard Instruments'
-            ],
-            message: 'Please select correct category for product'
-        }
+        // enum: {
+        //     values: [
+        //         'Plants - Roses',
+        //         'Plants - Orchids',
+        //         'Plants - Succulents',
+        //         'Farming Tools - Shovels',
+        //         'Farming Tools - Pruners',
+        //         'Farming Tools - Rakes',
+        //         'Farming Essentials - Fertilizers',
+        //         'Farming Essentials - Soil Mixes',
+        //         'Farming Essentials - Gardening Gloves'
+        //     ],
+        //     message: 'Please select correct category for product'
+        // }
     },
     supplier: {
         type: mongoose.Schema.ObjectId,

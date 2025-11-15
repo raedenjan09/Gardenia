@@ -25,12 +25,15 @@ export default function ProductList() {
   const token = localStorage.getItem('token');
 
   const categoryOptions = [
-    'Idiophones',
-    'Membranophones',
-    'Chordophones',
-    'Aerophones',
-    'Electrophones',
-    'Keyboard Instruments'
+    'Plants - Roses',
+    'Plants - Orchids',
+    'Plants - Succulents',
+    'Farming Tools - Shovels',
+    'Farming Tools - Pruners',
+    'Farming Tools - Rakes',
+    'Farming Essentials - Fertilizers',
+    'Farming Essentials - Soil Mixes',
+    'Farming Essentials - Gardening Gloves'
   ];
 
   const displayedProducts = (showDeleted ? deletedProducts : products).filter(p => {

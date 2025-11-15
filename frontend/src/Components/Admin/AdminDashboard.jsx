@@ -489,6 +489,7 @@ const AdminDashboard = () => {
         </div>
       </div>
 
+
       {/* Quick Actions */}
       <div className="quick-actions-section">
         <h2>Quick Actions</h2>
