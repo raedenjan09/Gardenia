@@ -14,6 +14,7 @@ import Review from "./Components/user/Review";
 import CheckoutConfirmation from "./Components/user/CheckoutConfirmation";
 import AdminDashboard from "./Components/admin/AdminDashboard";
 import AdminRoutes from "./Components/admin/AdminRoutes";
+import AdminLayout from "./Components/layouts/AdminLayout";
 import { getUser } from "./Components/utils/helper";
 
 // Product Management
@@ -40,7 +41,7 @@ import ViewOrder from "./Components/admin/ordermanagement/ViewOrder";
 // Review Management (NEW)
 import ReviewList from "./Components/admin/reviewmanagement/ReviewList";
 
-// Layout component that includes the header
+// Layout component that includes the header (for user routes)
 const Layout = ({ children }) => {
   return (
     <div className="app-layout">
@@ -49,6 +50,15 @@ const Layout = ({ children }) => {
         {children}
       </main>
     </div>
+  );
+};
+
+// Layout component for admin routes with sidebar
+const AdminLayoutWrapper = ({ children }) => {
+  return (
+    <AdminLayout>
+      {children}
+    </AdminLayout>
   );
 };
 
@@ -84,32 +94,32 @@ const App = () => {
         <Route path="/order-history" element={token ? <Layout><OrderHistory /></Layout> : <Navigate to="/login" />} /> 
         <Route path="/review/:productId" element={token ? <Layout><Review /></Layout> : <Navigate to="/login" />} />
 
-        {/* Admin Routes (with header) */}
-        <Route path="/admin/dashboard" element={<AdminRoutes><Layout><AdminDashboard /></Layout></AdminRoutes>} />
+        {/* Admin Routes (with sidebar) */}
+        <Route path="/admin/dashboard" element={<AdminRoutes><AdminLayoutWrapper><AdminDashboard /></AdminLayoutWrapper></AdminRoutes>} />
 
         {/* Product Management */}
-        <Route path="/admin/products" element={<AdminRoutes><Layout><ProductList /></Layout></AdminRoutes>} />
-        <Route path="/admin/products/new" element={<AdminRoutes><Layout><CreateProduct /></Layout></AdminRoutes>} />
-        <Route path="/admin/products/edit/:id" element={<AdminRoutes><Layout><UpdateProduct /></Layout></AdminRoutes>} />
-        <Route path="/admin/products/view/:id" element={<AdminRoutes><Layout><ViewProduct /></Layout></AdminRoutes>} />
+        <Route path="/admin/products" element={<AdminRoutes><AdminLayoutWrapper><ProductList /></AdminLayoutWrapper></AdminRoutes>} />
+        <Route path="/admin/products/new" element={<AdminRoutes><AdminLayoutWrapper><CreateProduct /></AdminLayoutWrapper></AdminRoutes>} />
+        <Route path="/admin/products/edit/:id" element={<AdminRoutes><AdminLayoutWrapper><UpdateProduct /></AdminLayoutWrapper></AdminRoutes>} />
+        <Route path="/admin/products/view/:id" element={<AdminRoutes><AdminLayoutWrapper><ViewProduct /></AdminLayoutWrapper></AdminRoutes>} />
 
         {/* Supplier Management */}
-        <Route path="/admin/suppliers" element={<AdminRoutes><Layout><SupplierList /></Layout></AdminRoutes>} />
-        <Route path="/admin/suppliers/new" element={<AdminRoutes><Layout><CreateSupplier /></Layout></AdminRoutes>} />
-        <Route path="/admin/suppliers/edit/:id" element={<AdminRoutes><Layout><UpdateSupplier /></Layout></AdminRoutes>} />
-        <Route path="/admin/suppliers/view/:id" element={<AdminRoutes><Layout><ViewSupplier /></Layout></AdminRoutes>} />
+        <Route path="/admin/suppliers" element={<AdminRoutes><AdminLayoutWrapper><SupplierList /></AdminLayoutWrapper></AdminRoutes>} />
+        <Route path="/admin/suppliers/new" element={<AdminRoutes><AdminLayoutWrapper><CreateSupplier /></AdminLayoutWrapper></AdminRoutes>} />
+        <Route path="/admin/suppliers/edit/:id" element={<AdminRoutes><AdminLayoutWrapper><UpdateSupplier /></AdminLayoutWrapper></AdminRoutes>} />
+        <Route path="/admin/suppliers/view/:id" element={<AdminRoutes><AdminLayoutWrapper><ViewSupplier /></AdminLayoutWrapper></AdminRoutes>} />
 
         {/* User Management */}
-        <Route path="/admin/users" element={<AdminRoutes><Layout><UserList /></Layout></AdminRoutes>} />
-        <Route path="/admin/users/create" element={<AdminRoutes><Layout><CreateUser /></Layout></AdminRoutes>} />
-        <Route path="/admin/users/view/:id" element={<AdminRoutes><Layout><ViewUser /></Layout></AdminRoutes>} />
+        <Route path="/admin/users" element={<AdminRoutes><AdminLayoutWrapper><UserList /></AdminLayoutWrapper></AdminRoutes>} />
+        <Route path="/admin/users/create" element={<AdminRoutes><AdminLayoutWrapper><CreateUser /></AdminLayoutWrapper></AdminRoutes>} />
+        <Route path="/admin/users/view/:id" element={<AdminRoutes><AdminLayoutWrapper><ViewUser /></AdminLayoutWrapper></AdminRoutes>} />
 
         {/* Order Management */}
-        <Route path="/admin/orders" element={<AdminRoutes><Layout><OrderList /></Layout></AdminRoutes>} />
-        <Route path="/admin/orders/view/:orderId" element={<AdminRoutes><Layout><ViewOrder /></Layout></AdminRoutes>} />
+        <Route path="/admin/orders" element={<AdminRoutes><AdminLayoutWrapper><OrderList /></AdminLayoutWrapper></AdminRoutes>} />
+        <Route path="/admin/orders/view/:orderId" element={<AdminRoutes><AdminLayoutWrapper><ViewOrder /></AdminLayoutWrapper></AdminRoutes>} />
 
         {/* Review Management (NEW) */}
-        <Route path="/admin/reviews" element={<AdminRoutes><Layout><ReviewList /></Layout></AdminRoutes>} />
+        <Route path="/admin/reviews" element={<AdminRoutes><AdminLayoutWrapper><ReviewList /></AdminLayoutWrapper></AdminRoutes>} />
 
         {/* Catch-all Redirect */}
         <Route path="*" element={<Navigate to={getDefaultRoute()} />} />
